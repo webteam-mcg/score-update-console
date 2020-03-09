@@ -1,4 +1,4 @@
-# vue-console
+# score-update-console
 
 ## Project setup
 ```
