@@ -31,9 +31,9 @@
         <div style="padding-bottom: 25px;"></div>
         <table style="width: 100%;">
             <tr>
-                <td colspan="2">Player1 Name</td>
+                <td colspan="2">{{ player1Name }}</td>
                 <td><input type="radio" v-model="currentPlayer" value="player1"></td>
-                <td colspan="2">Player2 Name</td>
+                <td colspan="2">{{ player2Name }}</td>
                 <td><input type="radio" v-model="currentPlayer" value="player2"></td>
             </tr>
             <tr>
@@ -168,7 +168,8 @@ export default {
   name: "Home",
   data: function() {
     return {
-      currentPlayer: null,
+      player1Name:null,
+      player2Name:null
     };
   },
 
@@ -214,6 +215,17 @@ export default {
       }
     }
 
+  },
+    mounted(){
+    db.collection("main").doc("live")
+    .onSnapshot(snapshot=>{
+
+      //Display stricker and non-stricker name
+      this.player1Name = snapshot.data().player1.name
+      this.player2Name = snapshot.data().player2.name
+
+
+    });
   }
 
   
