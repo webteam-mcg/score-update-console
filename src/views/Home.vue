@@ -49,13 +49,13 @@
                 <td><button class="score" @click="updateScore(6)">6</button></td>
             </tr>
             <tr>
-                <td><button class="extra">WIDE</button></td>
-                <td><button class="extra">NO BALL</button></td>
+                <td><button class="extra" @click="addExtra('wd')">WIDE</button></td>
+                <td><button class="extra" @click="addExtra('nb')">NO BALL</button></td>
                 <td></td>
                 <td></td>
                 <td></td>
-                <td><button id="wicket">WICKET</button></td>
-                <td><button class="score">END OVER</button></td>
+                <td><router-link class="routerLink" to="/wicket"><button id="wicket">WICKET</button></router-link></td>
+                <td><button class="score" @click="endOver()">END OVER</button></td>
             </tr>
         </table>
     </div>
@@ -155,7 +155,6 @@
       float: right;
   }
 
-
 </style>
 
 <script>
@@ -166,10 +165,16 @@ import firebase from 'firebase';
 
 export default {
   name: "Home",
+  components: {
+
+    },
   data: function() {
     return {
       player1Name:null,
-      player2Name:null
+      player2Name:null,
+      currentPlayer:null,
+      thisOver:null,
+      isModalVisible: false,
     };
   },
 
@@ -190,14 +195,7 @@ export default {
         }
       )
 
-//Update this over
-      var uniqueBall = Date.now()+"."+score
-      db.collection('main').doc('live').update(
-        {
-          thisOver:firebase.firestore.FieldValue.arrayUnion(uniqueBall)
-        }
-      )
-
+//Update current player details
     if (this.currentPlayer == "player1"){
             db.collection('main').doc('live').update(
               {
@@ -213,7 +211,43 @@ export default {
               }
             )
       }
-    }
+
+//Update this over
+      var uniqueBall = Date.now()+"."+score
+      db.collection('main').doc('live').update(
+        {
+          thisOver:firebase.firestore.FieldValue.arrayUnion(uniqueBall)
+        }
+      )
+      
+    },
+// Handle Wide and No ball
+    addExtra: function(score){
+      //Update main score
+      db.collection('main').doc('live').update(
+        {
+          score:firebase.firestore.FieldValue.increment(1)
+        }
+      )
+
+      //Update this over
+      var uniqueBall = Date.now()+"."+score
+      db.collection('main').doc('live').update(
+        {
+          thisOver:firebase.firestore.FieldValue.arrayUnion(uniqueBall)
+        }
+      )
+    },
+
+// End over by reseting thisOver
+    endOver: function(){
+      db.collection('main').doc('live').update(
+        {
+          thisOver:firebase.firestore.FieldValue.delete()
+        }
+      )
+  },
+
 
   },
     mounted(){
@@ -223,7 +257,7 @@ export default {
       //Display stricker and non-stricker name
       this.player1Name = snapshot.data().player1.name
       this.player2Name = snapshot.data().player2.name
-
+      this.thisOver = snapshot.data().thisOver
 
     });
   }

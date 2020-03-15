@@ -10,7 +10,7 @@
         </select>
         <input type="checkbox" value="C" v-model="c" @keyup.enter="addPlayer"><span> Captain</span>
         <input type="checkbox" value="W" v-model="w" @keyup.enter="addPlayer"><span> Wicket Keeper</span>
-        <button class="button" @click="newPlayer">ADD</button>
+        <button class="button" @click="addPlayer">ADD</button>
     </div>
 </template>
 
@@ -60,16 +60,6 @@ export default {
           );
       this.playerName = "";
     },
-
-        newPlayer: function(){
-      db.collection('main').doc('live').update(
-        {
-          player1:{name:"Kushan Shamika",score:1,balls:0}
-          }
-          );
-      this.playerName = "";
-    },
-
 
   }
 };
