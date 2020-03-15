@@ -13,14 +13,11 @@
         </div>
         <div style="clear: both;"></div>
         <div>
-            <input type="text" value="MCG won the toss and elected to bat first">
+            <input type="text" placeholder="MCG won the toss and elected to bat first">
             <button class="button">Update</button>
         </div>
         <div style="clear: both;"></div>
-        <div style="display: inline-block;">
-            <button class="button">Inning Break</button>
-            <button class="button">End Match</button>
-        </div>
+
         <div style="clear: both;padding-bottom: 25px;"></div>
         <hr>
         <div style="padding-bottom: 25px;"></div>

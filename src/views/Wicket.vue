@@ -90,6 +90,9 @@ export default {
         }
       )
 
+      //Redirect to Home page
+      window.location.href = '/'
+
     }
   },
     mounted(){
