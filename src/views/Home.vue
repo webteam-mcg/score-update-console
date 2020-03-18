@@ -52,7 +52,7 @@
                 <td></td>
                 <td></td>
                 <td><router-link class="routerLink" to="/wicket"><button id="wicket">WICKET</button></router-link></td>
-                <td><button class="score" @click="endOver()">END OVER</button></td>
+                <td><router-link class="routerLink" to="/over"><button class="score">END OVER</button></router-link></td>
             </tr>
         </table>
     </div>

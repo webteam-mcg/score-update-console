@@ -3,7 +3,8 @@ import VueRouter from "vue-router";
 import Home from "../views/Home.vue";
 import Player from "../views/Player.vue";
 import Setup from "../views/Setup.vue";
-import Wicket from "../views/Wicket.vue"
+import Wicket from "../views/Wicket.vue";
+import Over from "../views/Over.vue"
 
 Vue.use(VueRouter);
 
@@ -28,6 +29,11 @@ const routes = [
     name: "wicket",
     component: Wicket
   },
+  {
+    path: "/over",
+    name: "over",
+    component: Over
+  }
   
 ];
 

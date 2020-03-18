@@ -5,7 +5,7 @@
 
             <tr>
                 <td>{{ player1Name }}</td>
-                <td><input type="radio" v-model="currentPlayer" value="player1"></td>
+                <td><input type="radio" v-model="currentPlayer" value="player1" ></td>
                 <td>{{ player2Name }}</td>
                 <td><input type="radio" v-model="currentPlayer" value="player2"></td>
             </tr>
@@ -32,7 +32,7 @@
             <tr>
               <td colspan="2">Select new player</td>
               <td>
-                <select>
+                <select v-model="newPlayer">
                   <option>Select Player</option>
                   <option v-for="i in batting" :key="i" :value="i">{{i}}</option>
                 </select>
@@ -71,27 +71,37 @@ export default {
 
     data: function() {
     return {
-      player1Name:null,
-      player2Name:null,
       currentPlayer:null,
       batting:null,
       fielding:null,
       team:null,
+      newPlayer:null,
     };
   },
   methods:{
     addWicket: function(){
+
+      if(this.currentPlayer == "player1"){
+        db.collection('main').doc('live').update(
+          {
+            'player1.name': this.newPlayer,
+            'player1.balls':0,
+            'player1.score':0
+          }
+        )
+      }
       
       //Update main wicket count
       db.collection('main').doc('live').update(
         {
           wickets:firebase.firestore.FieldValue.increment(1),
-          'bowler.wickets':firestore.FieldValue.increment(1)
+          'bowler.wickets':firestore.FieldValue.increment(1),
+          thisOver:firebase.firestore.FieldValue.arrayUnion(this.newPlayer+"."+"W")
         }
       )
 
       //Redirect to Home page
-      window.location.href = '/'
+      //window.location.href = '/'
 
     }
   },
