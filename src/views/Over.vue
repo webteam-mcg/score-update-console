@@ -46,6 +46,8 @@ export default {
   methods:{
     newBowler: function(){
 
+      var updateOver = "";
+
       var nameArray = [];
       for (let [key, value] of Object.entries(this.bowlersName)){
         nameArray.push(value)
@@ -81,7 +83,8 @@ export default {
             'bowler.balls':bowlersBalls[index],
             'bowler.score':bowlersScore[index],
             'bowler.wickets':bowlersWickets[index],
-            'bowler.name':this.bowler
+            'bowler.name':this.bowler,
+            thisOver:updateOver
           }
         )
       }else{
@@ -90,7 +93,8 @@ export default {
             'bowler.balls':0,
             'bowler.score':0,
             'bowler.wickets':0,
-            'bowler.name':this.bowler
+            'bowler.name':this.bowler,
+            thisOver:updateOver
           }
         )
 

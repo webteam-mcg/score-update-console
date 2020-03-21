@@ -191,6 +191,7 @@ export default {
 
       var fourCount = 0;
       var sixCount = 0;
+      var updateOver = this.thisOver+" "+score
 
       if (score == 4){
         fourCount = fourCount+1
@@ -206,6 +207,7 @@ export default {
           score:firebase.firestore.FieldValue.increment(score),
           'bowler.score':firebase.firestore.FieldValue.increment(score),
           'bowler.balls':firebase.firestore.FieldValue.increment(1),
+          thisOver:updateOver
         }
       )
 
@@ -297,12 +299,15 @@ export default {
 // Handle Wide and No ball
     addExtra: function(type){
 
+      var updateOver = this.thisOver+" "+type
+
       var extraType = "extra."+type;
       var score = parseInt(this.extra);
       //Update main score
       db.collection('main').doc('live').update(
         {
-          score:firebase.firestore.FieldValue.increment(1)
+          score:firebase.firestore.FieldValue.increment(1),
+          thisOver:updateOver
         }
       )
 
@@ -359,6 +364,7 @@ export default {
       this.inning = snapshot.data().inning
       this.bowler = snapshot.data().bowler.name
       this.team = snapshot.data().team
+      this.thisOver = snapshot.data().thisOver
     });
   }
 

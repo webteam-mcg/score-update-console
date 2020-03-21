@@ -82,6 +82,7 @@ export default {
       bowler:null,
       type:null,
       taken:null,
+      thisOver:null
     };
   },
   methods:{
@@ -89,6 +90,7 @@ export default {
 
       var status = null;
       var stricker = null;
+      var updateOver = this.thisOver+" W"
 
       if(this.type=="b"){
         status = "b "+this.bowler
@@ -109,7 +111,7 @@ export default {
           {
             'player1.name': this.newPlayer,
             'player1.balls':0,
-            'player1.score':0
+            'player1.score':0,
           }
         )
       }else{
@@ -141,6 +143,7 @@ export default {
           wickets:firebase.firestore.FieldValue.increment(1),
           'bowler.wickets':firestore.FieldValue.increment(1),
           balls:firestore.FieldValue.increment(1),
+          'thisOver':updateOver
         }
       )
 
@@ -204,6 +207,7 @@ export default {
       this.team = snapshot.data().team
       this.inning = snapshot.data().inning
       this.bowler = snapshot.data().bowler
+      this.thisOver = snapshot.data().thisOver
 
       db.collection("players")
     .onSnapshot(querySnapshot=> {
