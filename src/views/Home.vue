@@ -48,9 +48,19 @@
             <tr>
                 <td><button class="extra" @click="addExtra('wd')">WIDE</button></td>
                 <td><button class="extra" @click="addExtra('nb')">NO BALL</button></td>
-                <td></td>
-                <td></td>
-                <td></td>
+                <td><button class="extra" @click="addExtra('b')">Bye</button></td>
+                <td><button class="extra" @click="addExtra('lb')">Leg Bye</button></td>
+                <td>
+                  <select v-model="extra">
+                    <option value="0">0</option>
+                    <option value="1">1</option>
+                    <option value="3">2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                    <option value="5">5</option>
+                    <option value="6">6</option>
+                  </select>
+                </td>
                 <td><router-link class="routerLink" to="/wicket"><button id="wicket">WICKET</button></router-link></td>
                 <td><router-link class="routerLink" to="/over"><button class="score">END OVER</button></router-link></td>
             </tr>
@@ -171,35 +181,64 @@ export default {
       player2Name:null,
       currentPlayer:null,
       thisOver:null,
-      isModalVisible: false,
+      inning:null,
+      bowler:null,
+      team:null,
+      extra:null,
     };
   },
 
   methods:{
     updateScore: function(score){
 
-//Update main balls
+      var fourCount = 0;
+      var sixCount = 0;
+
+      if (score == 4){
+        fourCount = fourCount+1
+      }else if(score == 6){
+        sixCount = sixCount+1
+      }
+
+
+//Update main balls, main score, this over
       db.collection('main').doc('live').update(
         {
-          balls:firebase.firestore.FieldValue.increment(1)
+          balls:firebase.firestore.FieldValue.increment(1),
+          score:firebase.firestore.FieldValue.increment(score),
+          'bowler.score':firebase.firestore.FieldValue.increment(score),
+          'bowler.balls':firebase.firestore.FieldValue.increment(1),
         }
       )
 
-//Update main score
-      db.collection('main').doc('live').update(
-        {
-          score:firebase.firestore.FieldValue.increment(score)
-        }
-      )
 
 //Update current player details
     if (this.currentPlayer == "player1"){
+
             db.collection('main').doc('live').update(
               {
                 'player1.score':firebase.firestore.FieldValue.increment(score),
                 'player1.balls':firebase.firestore.FieldValue.increment(1)
               }
             )
+
+            db.collection('batting').where('inning','==',this.inning).where('name','==',this.player1Name).get().then(querrySnapshot =>{
+
+              querrySnapshot.forEach(doc=>{
+
+                db.collection('batting').doc(doc.id).update(
+                   {
+                score:firebase.firestore.FieldValue.increment(score),
+                balls:firebase.firestore.FieldValue.increment(1),
+                '4s':firebase.firestore.FieldValue.increment(fourCount),
+                '6s':firebase.firestore.FieldValue.increment(sixCount)
+                    }
+                )
+              }
+            )
+          }
+        )
+            
       }else{
             db.collection('main').doc('live').update(
               {
@@ -207,19 +246,61 @@ export default {
                 'player2.balls':firebase.firestore.FieldValue.increment(1)
               }
             )
+
+            db.collection('batting').where('inning','==',this.inning).where('name','==',this.player2Name).get().then(querrySnapshot =>{
+
+              querrySnapshot.forEach(doc=>{
+
+                db.collection('batting').doc(doc.id).update(
+                   {
+                score:firebase.firestore.FieldValue.increment(score),
+                balls:firebase.firestore.FieldValue.increment(1),
+                '4s':firebase.firestore.FieldValue.increment(fourCount),
+                '6s':firebase.firestore.FieldValue.increment(sixCount)
+                    }
+                )
+              }
+            )
+          }
+        )
       }
 
-//Update this over
-      var uniqueBall = Date.now()+"."+score
-      db.collection('main').doc('live').update(
-        {
-          thisOver:firebase.firestore.FieldValue.arrayUnion(uniqueBall)
-        }
-      )
+          db.collection('bowling').where('inning','==',this.inning).where('name','==',this.bowler).get().then(querrySnapshot =>{
+
+              querrySnapshot.forEach(doc=>{
+
+                db.collection('bowling').doc(doc.id).update(
+                   {
+                score:firebase.firestore.FieldValue.increment(score),
+                balls:firebase.firestore.FieldValue.increment(1),
+                    }
+                )
+              }
+            )
+          }
+        )
+
+          db.collection('innings').where('inning','==',this.inning).where('team','==',this.team).get().then(querrySnapshot =>{
+
+              querrySnapshot.forEach(doc=>{
+
+                db.collection('innings').doc(doc.id).update(
+                   {
+                score:firebase.firestore.FieldValue.increment(score),
+                balls:firebase.firestore.FieldValue.increment(1),
+                    }
+                )
+              }
+            )
+          }
+        )
       
     },
 // Handle Wide and No ball
-    addExtra: function(score){
+    addExtra: function(type){
+
+      var extraType = "extra."+type;
+      var score = parseInt(this.extra);
       //Update main score
       db.collection('main').doc('live').update(
         {
@@ -227,25 +308,47 @@ export default {
         }
       )
 
-      //Update this over
-      var uniqueBall = Date.now()+"."+score
+      db.collection('innings').where('inning','==',this.inning).where('team','==',this.team).get().then(querrySnapshot =>{
+
+              querrySnapshot.forEach(doc=>{
+
+                db.collection('innings').doc(doc.id).update(
+                   {
+                score:firebase.firestore.FieldValue.increment(score),
+                'extra.total':firebase.firestore.FieldValue.increment(score),
+                [extraType]:firebase.firestore.FieldValue.increment(score),
+
+                    }
+                )
+              }
+            )
+          }
+        )
+
+      if (type == "nb" && type == "wd"){
+
+          db.collection('bowling').where('inning','==',this.inning).where('name','==',this.bowler).get().then(querrySnapshot =>{
+
+              querrySnapshot.forEach(doc=>{
+
+                db.collection('bowling').doc(doc.id).update(
+                   {
+                score:firebase.firestore.FieldValue.increment(score),
+                    }
+                )
+              }
+            )
+          }
+        )
+        
       db.collection('main').doc('live').update(
         {
-          thisOver:firebase.firestore.FieldValue.arrayUnion(uniqueBall)
+          'bowler.score':firebase.firestore.FieldValue.increment(score),
         }
       )
+      }
+
     },
-
-// End over by reseting thisOver
-    endOver: function(){
-      db.collection('main').doc('live').update(
-        {
-          thisOver:firebase.firestore.FieldValue.delete()
-        }
-      )
-  },
-
-
   },
     mounted(){
     db.collection("main").doc("live")
@@ -255,7 +358,9 @@ export default {
       this.player1Name = snapshot.data().player1.name
       this.player2Name = snapshot.data().player2.name
       this.thisOver = snapshot.data().thisOver
-
+      this.inning = snapshot.data().inning
+      this.bowler = snapshot.data().bowler.name
+      this.team = snapshot.data().team
     });
   }
 

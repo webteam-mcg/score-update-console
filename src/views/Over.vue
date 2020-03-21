@@ -5,7 +5,7 @@
       <tr>
     <td>Select new Bowler</td>
     <td>
-          <select>
+          <select v-model="bowler">
               <option>Select Bowler</option>
               <option v-for="i in fielding" :key="i" :value="i">{{i}}</option>
           </select>
@@ -13,7 +13,7 @@
       </tr>
       <tr>
         <td></td>
-        <td><button class="button">Update</button></td>
+        <td><button class="button" @click="newBowler()">Update</button></td>
       </tr>
     </table>
   </div>
@@ -24,22 +24,37 @@
 <script>
 
 import db from '../db.js';
-import firebase from 'firebase';
+//import firebase from 'firebase';
 export default {
 
     data: function() {
     return {
       fielding:null,
+      bowler:null,
+      inning:null,
+      bowlerScore:null,
+      bowlerBall:null,
+      bowlerWickets:null,
+      team:null,
+      bowlingCard:null,
     };
   },
 
   methods:{
     newBowler: function(){
-      db.collection('main').doc('live').update(
-        {
-          //Fetch data from bowling card
-        }
-      )
+
+      var nameArray = [];
+      for (let [key, value] of Object.entries(this.bowlingCard)){
+        nameArray.push(value)
+        console.log(key)
+      }
+
+      if (nameArray.indexOf(this.bowler)>-1){
+        console.log("Wade hari")
+      }else{
+        //console.log(nameArray.find(this.bowler))
+        console.log(nameArray)
+      }
     }
   },
       mounted(){
@@ -48,6 +63,17 @@ export default {
         .onSnapshot(snapshot=>{
 
       this.team = snapshot.data().team
+      this.inning = snapshot.data().inning
+
+          db.collection('bowling').where('inning','==',this.inning).where('team','==',this.team).get().then(querrySnapshot =>{
+
+              var bowlers = []
+              querrySnapshot.forEach(doc=>{
+                bowlers.push(doc.data().name)
+              })
+              this.bowlingCard = bowlers
+          }
+        )
 
       db.collection("players")
     .onSnapshot(querySnapshot=> {
@@ -62,15 +88,9 @@ export default {
         this.fielding = fieldingPlayers
     
     });
-
-          db.collection('main').doc('live').update(
-        {
-          thisOver:firebase.firestore.FieldValue.delete()
-        }
-      )
-
-
     });
+
+
 
 
 

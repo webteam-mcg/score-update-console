@@ -12,18 +12,18 @@
             <tr>
                 <td>Wicket type</td>
                 <td>
-                  <select>
+                  <select v-model="type">
                     <option>Select Wicket Type</option>
-                    <option>Bowled</option> //b "Bowler Name"
-                    <option>Caught</option> //c "Player Name" b "Bowler Name"
-                    <option>Run Out</option> // run out("Player Name")
-                    <option>Stumping</option> //st "Player Name" b "Player Name"
-                    <option>LBW</option> // lbw b "Bowler Name"
+                    <option value="b">Bowled</option> //b "Bowler Name"
+                    <option value="c">Caught</option> //c "Player Name" b "Bowler Name"
+                    <option value="run">Run Out</option> // run out("Player Name")
+                    <option value="st">Stumping</option> //st "Player Name" b "Player Name"
+                    <option value="lbw">LBW</option> // lbw b "Bowler Name"
                   </select>
                 </td>
                 <td>Taken by</td>
                 <td>
-                  <select>
+                  <select v-model="taken">
                     <option>Select Player</option>
                     <option v-for="i in fielding" :key="i" :value="i">{{i}}</option>
                   </select>
@@ -76,12 +76,35 @@ export default {
       fielding:null,
       team:null,
       newPlayer:null,
+      player1Name:null,
+      player2Name:null,
+      inning:null,
+      bowler:null,
+      type:null,
+      taken:null,
     };
   },
   methods:{
     addWicket: function(){
 
+      var status = null;
+      var stricker = null;
+
+      if(this.type=="b"){
+        status = "b "+this.bowler
+      }else if(this.type=="c"){
+        status = "c "+this.taken+" b "+this.bowler
+      }else if(this.type=="run"){
+        status = "run out("+this.taken+")"
+      }else if(this.type=="st"){
+        status = "st "+this.taken+" b "+this.bowler
+      }else if(this.type=="lbw"){
+        status = "lbw b "+this.bowler
+      }
+
+
       if(this.currentPlayer == "player1"){
+        stricker = this.player1Name
         db.collection('main').doc('live').update(
           {
             'player1.name': this.newPlayer,
@@ -89,16 +112,81 @@ export default {
             'player1.score':0
           }
         )
+      }else{
+        stricker = this.player2Name
+        db.collection('main').doc('live').update(
+          {
+            'player2.name': this.newPlayer,
+            'player2.balls':0,
+            'player2.score':0
+          }
+        )
       }
+
+      db.collection("batting").add({
+                    timestamp:firebase.firestore.FieldValue.serverTimestamp(),
+                    team:this.team,
+                    inning:this.inning,
+                    name:this.newPlayer,
+                    balls:0,
+                    score:0,
+                    '4s':0,
+                    '6s':0,
+                    status:'not out'
+                })
       
       //Update main wicket count
       db.collection('main').doc('live').update(
         {
           wickets:firebase.firestore.FieldValue.increment(1),
           'bowler.wickets':firestore.FieldValue.increment(1),
-          thisOver:firebase.firestore.FieldValue.arrayUnion(this.newPlayer+"."+"W")
+          balls:firestore.FieldValue.increment(1),
         }
       )
+
+            db.collection('innings').where('inning','==',this.inning).where('team','==',this.team).get().then(querrySnapshot =>{
+
+              querrySnapshot.forEach(doc=>{
+
+                db.collection('innings').doc(doc.id).update(
+                   {
+                wickets:firebase.firestore.FieldValue.increment(1),
+                balls:firebase.firestore.FieldValue.increment(1),
+                    }
+                )
+              }
+            )
+          }
+        )
+
+        db.collection('bowling').where('inning','==',this.inning).where('name','==',this.bowler).get().then(querrySnapshot =>{
+
+              querrySnapshot.forEach(doc=>{
+
+                db.collection('bowling').doc(doc.id).update(
+                   {
+                wickets:firebase.firestore.FieldValue.increment(1),
+                balls:firebase.firestore.FieldValue.increment(1),
+                    }
+                )
+              }
+            )
+          }
+        )
+
+        db.collection('batting').where('inning','==',this.inning).where('name','==',stricker).get().then(querrySnapshot =>{
+
+              querrySnapshot.forEach(doc=>{
+
+                db.collection('batting').doc(doc.id).update(
+                   {
+                status:status,
+                    }
+                )
+              }
+            )
+          }
+        )
 
       //Redirect to Home page
       //window.location.href = '/'
@@ -114,6 +202,8 @@ export default {
       this.player1Name = snapshot.data().player1.name
       this.player2Name = snapshot.data().player2.name
       this.team = snapshot.data().team
+      this.inning = snapshot.data().inning
+      this.bowler = snapshot.data().bowler
 
       db.collection("players")
     .onSnapshot(querySnapshot=> {
@@ -129,7 +219,6 @@ export default {
         });
         this.batting = battingPlayers,
         this.fielding = fieldingPlayers
-        console.log(this.batting)
     
     });
 
