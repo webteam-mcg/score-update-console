@@ -1,20 +1,8 @@
 <template>
     <div id="scorePanel">
         <div>
-            <img src="@/assets/mcg.png" height="50px" width="auto" class="teamLogo">
-            <p class="teamName">MCG</p>
-            <h3 class="teamScore">100/0</h3>
-        </div>
-        <div style="clear: both;"></div>
-        <div>
-            <img src="@/assets/rcg.png" height="45px" width="auto" class="teamLogo" style="padding-right: 22px;">
-            <p class="teamName">RCG</p>
-            <h3 class="teamScore">0/0</h3>
-        </div>
-        <div style="clear: both;"></div>
-        <div>
-            <input type="text" placeholder="MCG won the toss and elected to bat first">
-            <button class="button">Update</button>
+            <input type="text" placeholder="Display Special Message" v-model="message">
+            <button class="button" @click="updateMessage()">Update</button>
         </div>
         <div style="clear: both;"></div>
 
@@ -83,6 +71,7 @@
     text-align: left;
     background-color: #6c7a89;
     color: white;
+
   }
   .scoreCard{
       width: 100%;
@@ -185,10 +174,19 @@ export default {
       bowler:null,
       team:null,
       extra:null,
+      message:null,
     };
   },
 
   methods:{
+
+    updateMessage: function(){
+      db.collection('main').doc('live').update(
+        {
+          message:this.message
+        }
+      )
+    },
     updateScore: function(score){
 
       var fourCount = 0;

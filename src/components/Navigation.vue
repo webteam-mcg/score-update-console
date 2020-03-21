@@ -2,9 +2,6 @@
     <div id="sidebar">
         <router-link class="routerLink" to="/"> Home</router-link>
         <router-link class="routerLink" to="/player"> Add Players</router-link>
-        <router-link class="routerLink" to="/"> MCG</router-link>
-        <router-link class="routerLink" to="/"> RCG</router-link>
-        <router-link class="routerLink" to="/"> Scorecard</router-link>
         <router-link class="routerLink" to="/setup"> Setup</router-link>
       </div>
 </template>
