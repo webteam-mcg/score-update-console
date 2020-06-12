@@ -206,7 +206,7 @@ export default {
       this.player2Name = snapshot.data().player2.name
       this.team = snapshot.data().team
       this.inning = snapshot.data().inning
-      this.bowler = snapshot.data().bowler
+      this.bowler = snapshot.data().bowler.name
       this.thisOver = snapshot.data().thisOver
 
       db.collection("players")
