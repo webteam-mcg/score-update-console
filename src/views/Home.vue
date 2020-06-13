@@ -62,7 +62,7 @@
       width: 60%;
       padding: 10px;
       float: left;
-      padding-left: 250px;
+      padding-left: 350px;
   }
   .scoreCard th {
     padding-top: 12px;
