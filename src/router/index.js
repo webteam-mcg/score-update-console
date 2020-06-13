@@ -4,7 +4,8 @@ import Home from "../views/Home.vue";
 import Player from "../views/Player.vue";
 import Setup from "../views/Setup.vue";
 import Wicket from "../views/Wicket.vue";
-import Over from "../views/Over.vue"
+import Over from "../views/Over.vue";
+import Login from "../views/Login.vue";
 
 Vue.use(VueRouter);
 
@@ -33,6 +34,11 @@ const routes = [
     path: "/over",
     name: "over",
     component: Over
+  },
+  {
+    path: "/login",
+    name: "login",
+    component: Login
   }
   
 ];

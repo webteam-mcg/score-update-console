@@ -1,8 +1,10 @@
 <template>
     <div id="sidebar">
-        <router-link class="routerLink" to="/"> Home</router-link>
-        <router-link class="routerLink" to="/player"> Add Players</router-link>
-        <router-link class="routerLink" to="/setup"> Setup</router-link>
+        <router-link class="routerLink" to="/" v-if="user"> Home</router-link>
+        <router-link class="routerLink" to="/player" v-if="user"> Add Players</router-link>
+        <router-link class="routerLink" to="/setup" v-if="user"> Setup</router-link>
+        <router-link class="routerLink" to="/login" v-if="!user"> Login</router-link>
+        <li @click="$emit('logout')" class="routerLink" v-if="user">Logout</li>
       </div>
 </template>
 <style>
@@ -31,3 +33,9 @@
         color: #f1f1f1;
     }
 </style>
+<script>
+export default {
+    name: 'navigation',
+    props: ["user"]
+}
+</script>
