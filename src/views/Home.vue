@@ -17,9 +17,9 @@
         <table style="width: 100%;">
             <tr>
                 <td colspan="2">{{ player1Name }}</td>
-                <td><input type="radio" v-model="currentPlayer" value="player1"></td>
+                <td><input type="radio" v-model="currentPlayer" value="player1" @click="livePlayer('player1')"></td>
                 <td colspan="2">{{ player2Name }}</td>
-                <td><input type="radio" v-model="currentPlayer" value="player2"></td>
+                <td><input type="radio" v-model="currentPlayer" value="player2" @click="livePlayer('player2')"></td>
             </tr>
             <tr>
               <td colspan="7"><hr></td>
@@ -352,6 +352,16 @@ export default {
       }
 
     },
+
+    //Update current player
+    livePlayer: function(player){
+
+      db.collection('main').doc('live').update(
+        {
+          'currentPlayer': player
+        }
+      )
+    }
   },
     mounted(){
     db.collection("main").doc("live")
