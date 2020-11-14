@@ -69,10 +69,13 @@ export default {
 methods:{
     inning: function(team,inning){
 
-        db.collection('main').doc('live').update(
+        db.collection('main').doc('live').set(
             {
                 team:team,
                 inning:inning
+            },
+            {
+                merge: true
             }
         )
 
