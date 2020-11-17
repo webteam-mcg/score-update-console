@@ -23,7 +23,7 @@
         <td>
           <input
             type="radio"
-            v-model="currentPlayer"
+            v-model="striker"
             value="player1"
             @click="livePlayer('player1')"
           />
@@ -32,7 +32,7 @@
         <td>
           <input
             type="radio"
-            v-model="currentPlayer"
+            v-model="striker"
             value="player2"
             @click="livePlayer('player2')"
           />
@@ -189,7 +189,7 @@ export default {
     return {
       player1Name: null,
       player2Name: null,
-      currentPlayer: null,
+      striker: null,
       thisOver: null,
       inning: null,
       bowler: null,
@@ -235,10 +235,10 @@ export default {
           "bowler.score": firebase.firestore.FieldValue.increment(score),
           "bowler.balls": firebase.firestore.FieldValue.increment(1),
           [`thisOver.${currentBall}`]: score,
-          [`${this.currentPlayer}.score`]: firebase.firestore.FieldValue.increment(
+          [`${this.striker}.score`]: firebase.firestore.FieldValue.increment(
             score
           ),
-          [`${this.currentPlayer}.balls`]: firebase.firestore.FieldValue.increment(
+          [`${this.striker}.balls`]: firebase.firestore.FieldValue.increment(
             1
           )
         });
@@ -360,6 +360,7 @@ export default {
     }
   },
   mounted() {
+
     db.collection("main")
       .doc("live")
       .onSnapshot(snapshot => {

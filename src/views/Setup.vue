@@ -88,6 +88,20 @@ export default {
           }
         );
 
+      db.collection("main")
+        .doc("config")
+        .set(
+          {
+            inningOrder: firebase.firestore.FieldValue.arrayUnion({
+              team: team,
+              inning: inning
+            })
+          },
+          {
+            merge: true
+          }
+        );
+
       db.collection("innings").add({
         timestamp: firebase.firestore.FieldValue.serverTimestamp(),
         team: team,
