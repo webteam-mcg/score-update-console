@@ -117,6 +117,8 @@ export default {
           w: 0
         }
       });
+
+      localStorage.setItem("reload", "1");
     },
 
     startMatch: function() {
@@ -138,8 +140,8 @@ export default {
       db.collection("main")
         .doc("live")
         .onSnapshot(snapshot => {
-          var team = snapshot.data().team;
-          var inning = snapshot.data().inning;
+          let team = snapshot.data().team;
+          let inning = snapshot.data().inning;
 
           db.collection("batting").add({
             timestamp: firebase.firestore.FieldValue.serverTimestamp(),
@@ -182,11 +184,11 @@ export default {
     db.collection("main")
       .doc("live")
       .onSnapshot(snapshot => {
-        var team = snapshot.data().team;
+        let team = snapshot.data().team;
 
         db.collection("players").onSnapshot(querySnapshot => {
-          var battingPlayers = [];
-          var fieldingPlayers = [];
+          let battingPlayers = [];
+          let fieldingPlayers = [];
           querySnapshot.forEach(doc => {
             if (doc.data().team == team) {
               battingPlayers.push(doc.data().name);

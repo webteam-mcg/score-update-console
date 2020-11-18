@@ -14,7 +14,7 @@
 <style>
 #sidebar {
   height: 100%;
-  width: 15%;
+  width: 10%;
   position: fixed;
   z-index: 1;
   top: 0;

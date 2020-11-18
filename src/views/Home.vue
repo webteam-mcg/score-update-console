@@ -373,6 +373,11 @@ export default {
         this.team = snapshot.data().team;
         this.thisOver = snapshot.data().thisOver;
       });
+
+    if (localStorage.getItem("reload")) {
+      this.$router.go();
+      localStorage.removeItem("reload");
+    }
   }
 };
 </script>
