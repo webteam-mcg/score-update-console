@@ -90,7 +90,7 @@ export default {
   },
   methods: {
     addWicket: function() {
-      console.log("<--------- Add Wicket ----------->")
+      console.log("<--------- Add Wicket ----------->");
       let status = null;
       let stricker = null;
       let thisOverBall = 0;
@@ -103,19 +103,19 @@ export default {
 
       const currentBall = parseInt(thisOverBall) + 1;
 
-      if (this.type == "b") {
+      if (this.type === "b") {
         status = "b " + this.bowler;
-      } else if (this.type == "c") {
+      } else if (this.type === "c") {
         status = "c " + this.taken + " b " + this.bowler;
-      } else if (this.type == "run") {
+      } else if (this.type === "run") {
         status = "run out(" + this.taken + ")";
-      } else if (this.type == "st") {
+      } else if (this.type === "st") {
         status = "st " + this.taken + " b " + this.bowler;
-      } else if (this.type == "lbw") {
+      } else if (this.type === "lbw") {
         status = "lbw b " + this.bowler;
       }
 
-      if (this.currentPlayer == "player1") {
+      if (this.currentPlayer === "player1") {
         stricker = this.player1Name;
         db.collection("main")
           .doc("live")
@@ -142,8 +142,8 @@ export default {
         name: this.newPlayer,
         balls: 0,
         score: 0,
-        "4s": 0,
-        "6s": 0,
+        four: 0,
+        six: 0,
         status: "not out"
       });
 
@@ -154,7 +154,7 @@ export default {
           wickets: firebase.firestore.FieldValue.increment(1),
           "bowler.wickets": firestore.FieldValue.increment(1),
           balls: firestore.FieldValue.increment(1),
-          [`thisOver.${currentBall}`]: "W",
+          [`thisOver.${currentBall}`]: "W"
         });
 
       db.collection("innings")
@@ -221,7 +221,7 @@ export default {
           let battingPlayers = [];
           let fieldingPlayers = [];
           querySnapshot.forEach(doc => {
-            if (doc.data().team == this.team) {
+            if (doc.data().team === this.team) {
               battingPlayers.push(doc.data().name);
             } else {
               fieldingPlayers.push(doc.data().name);

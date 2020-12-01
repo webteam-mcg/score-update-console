@@ -75,17 +75,34 @@ export default {
   },
   methods: {
     inning: function(team, inning) {
+      let displayName = "";
+
+      if (team === "mcg" && inning === 1) {
+        displayName = "MCG 1st Inning";
+      } else if (team === "rcg" && inning === 1) {
+        displayName = "RCG 1st Inning";
+      } else if (team === "mcg" && inning === 2) {
+        displayName = "MCG 2nd Inning";
+      } else {
+        displayName = "RCG 2nd Inning";
+      }
+
       db.collection("main")
         .doc("live")
         .set(
           {
             team: team,
             inning: inning,
-            thisOver: {}
-          },
-          {
-            merge: true
+            thisOver: {},
+            balls: 0,
+            message: "",
+            day: 1, // TO-DO implement function to handle day
+            score: 0,
+            wickets: 0
           }
+          // {
+          //   merge: true
+          // }
         );
 
       db.collection("main")
@@ -94,7 +111,8 @@ export default {
           {
             inningOrder: firebase.firestore.FieldValue.arrayUnion({
               team: team,
-              inning: inning
+              inning: inning,
+              displayName: displayName
             })
           },
           {
@@ -114,7 +132,7 @@ export default {
           b: 0,
           lb: 0,
           nb: 0,
-          w: 0
+          wd: 0
         }
       });
 
@@ -134,7 +152,12 @@ export default {
           "bowler.name": this.bowler,
           "bowler.score": 0,
           "bowler.balls": 0,
-          "bowler.wickets": 0
+          "bowler.wickets": 0,
+          balls: 0,
+          wickets: 0,
+          score: 0,
+          currentPlayer: "player1",
+          thisOver: {}
         });
 
       db.collection("main")
@@ -150,8 +173,8 @@ export default {
             name: this.player1,
             balls: 0,
             score: 0,
-            "4s": 0,
-            "6s": 0,
+            four: 0,
+            six: 0,
             status: "not out"
           });
 
@@ -162,8 +185,8 @@ export default {
             name: this.player2,
             balls: 0,
             score: 0,
-            "4s": 0,
-            "6s": 0,
+            four: 0,
+            six: 0,
             status: "not out"
           });
 
@@ -190,7 +213,7 @@ export default {
           let battingPlayers = [];
           let fieldingPlayers = [];
           querySnapshot.forEach(doc => {
-            if (doc.data().team == team) {
+            if (doc.data().team === team) {
               battingPlayers.push(doc.data().name);
             } else {
               fieldingPlayers.push(doc.data().name);

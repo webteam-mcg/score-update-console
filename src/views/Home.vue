@@ -238,14 +238,19 @@ export default {
           [`${this.striker}.score`]: firebase.firestore.FieldValue.increment(
             score
           ),
-          [`${this.striker}.balls`]: firebase.firestore.FieldValue.increment(
-            1
-          )
+          [`${this.striker}.balls`]: firebase.firestore.FieldValue.increment(1)
         });
+
+      let strickerName;
+      if (this.striker === "player1") {
+        strickerName = this.player1Name;
+      } else {
+        strickerName = this.player2Name;
+      }
 
       db.collection("batting")
         .where("inning", "==", this.inning)
-        .where("name", "==", this.player1Name)
+        .where("name", "==", strickerName)
         .get()
         .then(querrySnapshot => {
           querrySnapshot.forEach(doc => {
@@ -254,8 +259,8 @@ export default {
               .update({
                 score: firebase.firestore.FieldValue.increment(score),
                 balls: firebase.firestore.FieldValue.increment(1),
-                "4s": firebase.firestore.FieldValue.increment(fourCount),
-                "6s": firebase.firestore.FieldValue.increment(sixCount)
+                four: firebase.firestore.FieldValue.increment(fourCount),
+                six: firebase.firestore.FieldValue.increment(sixCount)
               });
           });
         });
@@ -360,7 +365,6 @@ export default {
     }
   },
   mounted() {
-
     db.collection("main")
       .doc("live")
       .onSnapshot(snapshot => {
