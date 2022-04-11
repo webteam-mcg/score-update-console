@@ -24,8 +24,8 @@
     "eslint-plugin-prettier": "^3.1.4",
     "eslint-plugin-vue": "^6.2.2",
     "firebase": "^7.24.0",
-    "node-sass": "^4.14.1",
     "prettier": "^1.19.1",
+    "sass": "^1.50.0",
     "sass-loader": "^8.0.2",
     "vue-template-compiler": "^2.6.12",
     "vuefire": "^2.2.4"
